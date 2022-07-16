@@ -44,12 +44,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Tilemap
+    uniqueID: 1702588729
+    locked: 0
   - name: Items
     uniqueID: 1686213417
     locked: 0
   - name: Player
     uniqueID: 2671244621
-    locked: 0
-  - name: New Layer 4
-    uniqueID: 1702588729
     locked: 0
