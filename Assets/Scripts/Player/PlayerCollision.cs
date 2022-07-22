@@ -7,8 +7,6 @@ public class PlayerCollision : MonoBehaviour {
             PlayerManager.numberOfPollens++;
         } else if (collision.transform.tag == "Death") {
             PlayerManager.isGameOver = true;
-            gameObject.GetComponent<PlayerManager>().Update();
-            gameObject.SetActive(false);
         }
     }
 }
