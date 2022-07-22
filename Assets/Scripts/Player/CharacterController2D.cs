@@ -2,8 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class CharacterController2D : MonoBehaviour
-{
+public class CharacterController2D : MonoBehaviour {
 	[SerializeField] private float m_JumpForce = 400f;							// Amount of force added when the player jumps.
 	[Range(0, 1)] [SerializeField] private float m_CrouchSpeed = .36f;			// Amount of maxSpeed applied to crouching movement. 1 = 100%
 	[Range(0, .3f)] [SerializeField] private float m_MovementSmoothing = .05f;	// How much to smooth out the movement
@@ -12,6 +11,8 @@ public class CharacterController2D : MonoBehaviour
 	[SerializeField] private Transform m_GroundCheck;							// A position marking where to check if the player is grounded.
 	[SerializeField] private Transform m_CeilingCheck;							// A position marking where to check for ceilings
 	[SerializeField] private Collider2D m_CrouchDisableCollider;				// A collider that will be disabled when crouching
+	[SerializeField] private PhysicsMaterial2D m_StoppedMaterial;				// A physics material set when the player is stopped
+	[SerializeField] private PhysicsMaterial2D m_MovingMaterial;                // A physics material set when the player is moving
 
 	const float k_GroundedRadius = .2f; // Radius of the overlap circle to determine if grounded
 	private bool m_Grounded;            // Whether or not the player is grounded.
@@ -31,8 +32,7 @@ public class CharacterController2D : MonoBehaviour
 	public BoolEvent OnCrouchEvent;
 	private bool m_wasCrouching = false;
 
-	private void Awake()
-	{
+	private void Awake() {
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
 
 		if (OnLandEvent == null)
@@ -42,8 +42,7 @@ public class CharacterController2D : MonoBehaviour
 			OnCrouchEvent = new BoolEvent();
 	}
 
-	private void FixedUpdate()
-	{
+	private void FixedUpdate() {
 		bool wasGrounded = m_Grounded;
 		m_Grounded = false;
 
@@ -59,8 +58,7 @@ public class CharacterController2D : MonoBehaviour
 	}
 
 
-	public void Move(float move, bool crouch, bool jump)
-	{
+	public void Move(float move, bool crouch, bool jump) {
 		bool wasCrouching = m_wasCrouching;
 		// If crouching, check to see if the character can stand up
 		if (m_wasCrouching && !crouch) {
@@ -69,6 +67,17 @@ public class CharacterController2D : MonoBehaviour
 			// If the character has a ceiling preventing them from standing up, keep them crouching
 			Collider2D[] ceilingColliders = Physics2D.OverlapCircleAll(m_CeilingCheck.position, k_CeilingRadius, m_WhatIsGround);
 			if (ceilingColliders.Any(x => x.gameObject != gameObject)) crouch = true; 
+		}
+
+        
+        if (m_Grounded) {
+			if (move > 0) {
+				gameObject.GetComponent<Rigidbody2D>().sharedMaterial = m_MovingMaterial;
+			} else {
+				gameObject.GetComponent<Rigidbody2D>().sharedMaterial = m_StoppedMaterial;
+			}
+		} else {
+              	gameObject.GetComponent<Rigidbody2D>().sharedMaterial = m_MovingMaterial;
 		}
 
 		//only control the player if grounded or airControl is turned on
@@ -102,21 +111,18 @@ public class CharacterController2D : MonoBehaviour
 			m_Rigidbody2D.velocity = Vector3.SmoothDamp(m_Rigidbody2D.velocity, targetVelocity, ref m_Velocity, m_MovementSmoothing);
 
 			// If the input is moving the player right and the player is facing left...
-			if (move > 0 && !m_FacingRight)
-			{
+			if (move > 0 && !m_FacingRight) {
 				// ... flip the player.
 				Flip();
 			}
 			// Otherwise if the input is moving the player left and the player is facing right...
-			else if (move < 0 && m_FacingRight)
-			{
+			else if (move < 0 && m_FacingRight) {
 				// ... flip the player.
 				Flip();
 			}
 		}
 		// If the player should jump...
-		if (m_Grounded && jump)
-		{
+		if (m_Grounded && jump) {
 			// Add a vertical force to the player.
 			m_Grounded = false;
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
@@ -124,8 +130,7 @@ public class CharacterController2D : MonoBehaviour
 	}
 
 
-	private void Flip()
-	{
+	private void Flip() {
 		// Switch the way the player is labelled as facing.
 		m_FacingRight = !m_FacingRight;
 

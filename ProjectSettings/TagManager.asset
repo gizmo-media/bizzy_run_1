@@ -3,12 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Pollens
+  - Death
+  - GameOverPanel
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Pollens
   - Water
   - UI
   - 

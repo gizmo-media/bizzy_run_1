@@ -1,22 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class PollenController : MonoBehaviour
-{
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+namespace Assets.Scripts {
+    public class PollenController : MonoBehaviour {
+        public float pollenLifetime { get; set; }
+        private float createdAt;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        private void Start() {
+            createdAt = Time.time;
+        }
 
-    private void OnTriggerEnter2D(Collider2D collision) {
-        if (collision.tag == "Player") Destroy(gameObject);
+        private void Update() {
+            if (createdAt + pollenLifetime < Time.time) { 
+                Destroy(gameObject);
+            }
+        }
     }
 }
